@@ -1,0 +1,13 @@
+<main>
+  <header>
+    <img src="https://img-284.media.info/i/bg/1/1483-1443374633.webp" alt="logo">
+    <h1>{{ header }}</h1>
+  </header>
+
+  <nav>
+    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Home</a>
+    <a routerLink="/quests" routerLinkActive="active">Quests</a>
+  </nav>
+
+  <router-outlet></router-outlet>
+</main>

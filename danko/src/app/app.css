@@ -1,0 +1,62 @@
+
+.brand-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding: 10px 0;
+}
+
+.brand-logo {
+  height: 60px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+
+header {
+  text-align: center;
+  padding: 20px;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #0f5f05;
+}
+
+
+nav {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  background: linear-gradient(90deg, #1ea40a, #167a07);
+  padding: 12px 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.15);
+}
+
+nav a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  transition: 0.25s;
+  padding: 6px 12px;
+  border-radius: 6px;
+}
+
+
+nav a:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-1px);
+}
+
+
+nav a.active {
+  background-color: rgba(255, 255, 255, 0.25);
+  text-decoration: none;
+  transform: translateY(-1px);
+}

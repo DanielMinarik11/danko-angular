@@ -1,0 +1,22 @@
+
+.home {
+  text-align: center;
+  margin-top: 40px;
+  padding: 0 20px;
+}
+
+
+.home img {
+  width: 70%;
+  max-width: 800px;
+  border-radius: 16px;
+  margin-top: 20px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+
+.home img:hover {
+  transform: scale(1.03);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.25);
+}
