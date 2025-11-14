@@ -11,5 +11,4 @@ import { RouterModule } from '@angular/router';
 })
 export class App {
   header = 'Quest Overflow';
-  header_logo = 'assets/my-header.jpg';
 }

@@ -13,10 +13,11 @@ export interface Quest {
 @Injectable({ providedIn: 'root' })
 export class QuestService {
   private quests: Quest[] = [
-    { id: 1, title: 'Audiobook hour', description: 'Listen for 1 hour', xp: 40, image: 'assets/my-header.jpg', playerId: 1 },
-    { id: 2, title: 'Journal writing', description: 'Write for 15 minutes', xp: 80, image: 'assets/my-header.jpg', playerId: 2 },
-    { id: 3, title: 'Morning run', description: 'Run 3km', xp: 120, image: 'assets/my-header.jpg', playerId: 1 }
+    { id: 1, title: 'Read a chapter', description: 'Read one chapter of a book', xp: 50, image: 'assets/book.jpg', playerId: 1 },
+    { id: 2, title: 'Meditation', description: 'Meditate for 20 minutes', xp: 60, image: 'assets/meditation.jpg', playerId: 2 },
+    { id: 3, title: 'Evening walk', description: 'Walk 5km in the evening', xp: 100, image: 'assets/walk.jpg', playerId: 1 }
   ];
+  
 
   getQuests(): Quest[] {
     return [...this.quests];
