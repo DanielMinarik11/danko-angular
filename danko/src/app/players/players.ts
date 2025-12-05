@@ -1,12 +1,12 @@
 import { Component, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { PlayerService, Player } from './player.service';
 import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-players',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [RouterModule],
   template: `
     <section>
       <h2>Players</h2>

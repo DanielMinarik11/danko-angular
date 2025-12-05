@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { PlayerService, Player } from '../player.service';
 import { QuestService, Quest } from '../../quests/quest.service';
@@ -7,7 +7,7 @@ import { QuestService, Quest } from '../../quests/quest.service';
 @Component({
   selector: 'app-player-detail',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [RouterModule],
   template: `
     @if (player) {
       <section>

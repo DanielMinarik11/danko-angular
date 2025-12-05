@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ActivatedRoute } from '@angular/router';
 import { QuestService, Quest } from '../quest.service';
 
 @Component({
   selector: 'app-quest-detail',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   template: `
     @if (quest) {
       <div class="quest-detail">

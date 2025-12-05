@@ -1,11 +1,11 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { Quest } from '../quest.service';
 
 @Component({
     selector: 'app-quest-item',
     standalone: true,
-    imports: [CommonModule],
+    imports: [],
     template: `
     <div class="quest-card">
       <h3>{{ quest.title }}</h3>

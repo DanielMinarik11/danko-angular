@@ -1,6 +1,6 @@
 // src/app/clans/clan-detail/clan-detail.component.ts
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { ClanService } from '../clan.service';
 import { PlayerService } from '../../players/player.service';
@@ -8,7 +8,7 @@ import { PlayerService } from '../../players/player.service';
 @Component({
   selector: 'app-clan-detail',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [RouterModule],
   template: `
     @if (clan) {
       <section>
