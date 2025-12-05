@@ -17,7 +17,6 @@ export class QuestService {
     { id: 2, title: 'Meditation', description: 'Meditate for 20 minutes', xp: 60, image: 'assets/meditation.jpg', playerId: 2 },
     { id: 3, title: 'Evening walk', description: 'Walk 5km in the evening', xp: 100, image: 'assets/walk.jpg', playerId: 1 }
   ];
-  
 
   getQuests(): Quest[] {
     return [...this.quests];
@@ -31,20 +30,9 @@ export class QuestService {
     return this.quests.filter(q => q.playerId === playerId);
   }
 
-  addQuestForPlayer(playerId?: number) {
-    const nextId = this.quests.length ? Math.max(...this.quests.map(q => q.id)) + 1 : 1;
-    this.quests.push({
-      id: nextId,
-      title: 'New Quest',
-      description: 'Generated quest',
-      xp: 60,
-      image: 'assets/my-header.jpg',
-      playerId
-    });
-  }
-
-  addQuest() {
-    this.addQuestForPlayer(undefined);
+  // PREPISANÁ verzia:
+  addQuest(quest: Quest) {
+    this.quests.push(quest);
   }
 
   removeQuest(id: number) {

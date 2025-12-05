@@ -24,6 +24,7 @@ export class ClanService {
     return this.clans.find(c => c.id === id);
   }
 
+  // pôvodná metóda pre generovanie náhodných clanov
   addClan(defaultName?: string): Clan {
     const nextId = this.clans.length ? Math.max(...this.clans.map(c => c.id)) + 1 : 1;
     const newClan: Clan = {
@@ -36,6 +37,11 @@ export class ClanService {
     };
     this.clans.push(newClan);
     return newClan;
+  }
+
+  // NOVÁ metóda pre formulár
+  addClanFromForm(clan: Clan) {
+    this.clans.push(clan);
   }
 
   removeClan(id: number) {

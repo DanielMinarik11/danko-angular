@@ -1,4 +1,6 @@
 import { Component, signal } from '@angular/core';
+import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 import { ClanService, Clan } from './clan.service';
 import { PlayerService } from '../players/player.service';
@@ -7,7 +9,7 @@ import { RouterModule } from '@angular/router';
 @Component({
   selector: 'app-clans',
   standalone: true,
-  imports: [RouterModule],
+  imports: [RouterModule, ReactiveFormsModule, CommonModule],
   template: `
     <section>
       <h2>Clans</h2>
@@ -32,21 +34,72 @@ import { RouterModule } from '@angular/router';
         <p>No clans yet.</p>
       }
 
-      <button (click)="addClan()">Add Clan</button>
+      <h3>Create New Clan</h3>
+
+      <form [formGroup]="clanForm" (ngSubmit)="createClan()" class="clan-form">
+        <label>
+          Name:
+          <input formControlName="name" />
+        </label>
+        <div *ngIf="clanForm.controls.name.touched && clanForm.controls.name.invalid">
+          <small *ngIf="clanForm.controls.name.errors?.['required']">Required</small>
+          <small *ngIf="clanForm.controls.name.errors?.['minlength']">Min 2 chars</small>
+        </div>
+
+        <label>
+          Description:
+          <textarea formControlName="description"></textarea>
+        </label>
+
+        <label>
+          Capacity:
+          <input type="number" formControlName="capacity" />
+        </label>
+
+        <button type="submit" [disabled]="clanForm.invalid">Add Clan</button>
+      </form>
     </section>
   `,
   styleUrls: ['./clans.css']
 })
 export class ClansComponent {
   clans = signal<Clan[]>([]);
+  clanForm: any;
 
-  constructor(private clanService: ClanService, private playerService: PlayerService) {
+  constructor(
+    private clanService: ClanService,
+    private playerService: PlayerService,
+    private fb: FormBuilder
+  ) {
     this.clans.set(this.clanService.getClans());
+
+    this.clanForm = this.fb.group({
+      name: ['', [Validators.required, Validators.minLength(2)]],
+      description: [''],
+      capacity: [10, [Validators.required, Validators.min(1)]],
+    });
   }
 
-  addClan() {
-    this.clanService.addClan();
+  createClan() {
+    if (this.clanForm.invalid) {
+      this.clanForm.markAllAsTouched();
+      return;
+    }
+
+    const newClan: Clan = {
+      id: Date.now(),
+      name: this.clanForm.value.name!,
+      description: this.clanForm.value.description ?? '',
+      capacity: this.clanForm.value.capacity!,
+      members: [],
+      image: 'assets/my-header.jpg'
+    };
+    
+    this.clanService.addClanFromForm(newClan);
     this.clans.set(this.clanService.getClans());
+
+
+    this.clanForm.reset({ capacity: 10 });
   }
 
   remove(id: number) {

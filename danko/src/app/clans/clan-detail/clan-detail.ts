@@ -1,9 +1,7 @@
-// src/app/clans/clan-detail/clan-detail.component.ts
 import { Component } from '@angular/core';
-
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { ClanService } from '../clan.service';
-import { PlayerService } from '../../players/player.service';
+import { PlayerService, Player } from '../../players/player.service';
 
 @Component({
   selector: 'app-clan-detail',
@@ -22,6 +20,7 @@ import { PlayerService } from '../../players/player.service';
           @for (pid of clan.members; track pid) {
             <div>
               <a [routerLink]="['/players', pid]">{{ getPlayerName(pid) }}</a>
+              <span> (Lv {{ getPlayerLevel(pid).level }})</span>
               <button (click)="removeMember(pid)">Remove</button>
             </div>
           }
@@ -33,7 +32,7 @@ import { PlayerService } from '../../players/player.service';
         <div>
           <select #sel>
             @for (p of playersNotInClan(); track p.id) {
-              <option [value]="p.id">{{ p.nickname }} (Lv {{ p.level }})</option>
+              <option [value]="p.id">{{ p.nickname }} (Lv {{ getLevel(p).level }})</option>
             }
           </select>
           <button (click)="addSelectedMember(sel.value)">Add</button>
@@ -46,17 +45,32 @@ import { PlayerService } from '../../players/player.service';
 })
 export class ClanDetailComponent {
   clan?: ReturnType<ClanService['getClanById']>;
-  playersNotInClan = () => this.playerService.getPlayersNotInClan(this.clan?.id);
   private clanId?: number;
 
-  constructor(private route: ActivatedRoute, private clanService: ClanService, private playerService: PlayerService) {
+  constructor(
+    private route: ActivatedRoute,
+    private clanService: ClanService,
+    private playerService: PlayerService
+  ) {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     this.clanId = id;
     this.clan = this.clanService.getClanById(id);
   }
 
+  playersNotInClan = () => this.playerService.getPlayersNotInClan(this.clan?.id);
+
   getPlayerName(pid: number) {
     return this.playerService.getPlayerById(pid)?.nickname ?? 'Unknown';
+  }
+
+  getPlayerLevel(pid: number) {
+    const player = this.playerService.getPlayerById(pid);
+    if (!player) return { level: 0, title: '' };
+    return this.playerService.getLevel(player);
+  }
+
+  getLevel(player: Player) {
+    return this.playerService.getLevel(player);
   }
 
   removeMember(pid: number) {
@@ -74,7 +88,6 @@ export class ClanDetailComponent {
       this.playerService.setClan(pid, this.clanId);
       this.clan = this.clanService.getClanById(this.clanId);
     } else {
-      // optionally show alert
       alert('Could not add player (capacity reached or already member).');
     }
   }
