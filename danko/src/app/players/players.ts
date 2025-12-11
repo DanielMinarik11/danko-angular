@@ -2,23 +2,28 @@ import { Component, signal } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { FormsModule } from '@angular/forms'; // <-- pridali sme FormsModule
+import { FormsModule } from '@angular/forms'; // required for ngModel
 
 import { PlayerService, Player } from './player.service';
 import { playerLevels, PlayerLevel } from '../levels';
+import { SearchComponent } from '../search/search'; // <-- import search component
+
 
 @Component({
   selector: 'app-players',
   standalone: true,
-  imports: [RouterModule, ReactiveFormsModule, CommonModule, FormsModule], // <-- tu
+  imports: [RouterModule, ReactiveFormsModule, CommonModule, FormsModule, SearchComponent],
   template: `
     <section>
       <h2>Players</h2>
 
-      <!-- FILTER -->
+      <!-- SEARCH -->
+      <app-search (queryChange)="onSearch($event)"></app-search>
+
+      <!-- FILTER BY LEVEL -->
       <label>
         Filter by level:
-        <select [(ngModel)]="selectedLevel" (ngModelChange)="onLevelChange()">
+        <select [(ngModel)]="selectedLevel" (ngModelChange)="onFilterChange()">
           <option value="">All</option>
           @for (lvl of levels; track lvl) {
             <option [value]="lvl.title">{{ lvl.title }}</option>
@@ -83,14 +88,15 @@ import { playerLevels, PlayerLevel } from '../levels';
 export class PlayersComponent {
   players = signal<Player[]>([]);
 
-  // FILTER
-  selectedLevel = ''; // <-- teraz string, nie signal
-  levels = playerLevels; // Novice, Adept, Expert, Master...
+  // FILTER & SEARCH
+  selectedLevel = '';
+  searchQuery = '';
+  levels = playerLevels;
 
   playerForm: any;
 
   constructor(private playerService: PlayerService, private fb: FormBuilder) {
-    this.loadPlayers(); // load initial list
+    this.loadPlayers();
 
     this.playerForm = this.fb.group({
       nickname: ['', [Validators.required, Validators.minLength(2)]],
@@ -98,22 +104,32 @@ export class PlayersComponent {
     });
   }
 
-  // FILTER LOGIKA
-  onLevelChange() {
+  // SEARCH
+  onSearch(query: string) {
+    this.searchQuery = query.toLowerCase();
     this.loadPlayers();
   }
 
-  loadPlayers() {
-    const level = this.selectedLevel;
+  // LEVEL FILTER
+  onFilterChange() {
+    this.loadPlayers();
+  }
 
-    if (level === '') {
-      this.players.set(this.playerService.getPlayers());
-    } else {
-      const filtered = this.playerService
-        .getPlayers()
-        .filter(p => this.getLevel(p).title === level);
-      this.players.set(filtered);
+  // LOAD + FILTER
+  loadPlayers() {
+    let list = this.playerService.getPlayers();
+
+    // filter by level
+    if (this.selectedLevel !== '') {
+      list = list.filter(p => this.getLevel(p).title === this.selectedLevel);
     }
+
+    // filter by search
+    if (this.searchQuery !== '') {
+      list = list.filter(p => p.nickname.toLowerCase().includes(this.searchQuery));
+    }
+
+    this.players.set(list);
   }
 
   // CREATE PLAYER
