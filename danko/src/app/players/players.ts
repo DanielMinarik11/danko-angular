@@ -2,6 +2,7 @@ import { Component, signal } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms'; // <-- pridali sme FormsModule
 
 import { PlayerService, Player } from './player.service';
 import { playerLevels, PlayerLevel } from '../levels';
@@ -9,10 +10,22 @@ import { playerLevels, PlayerLevel } from '../levels';
 @Component({
   selector: 'app-players',
   standalone: true,
-  imports: [RouterModule, ReactiveFormsModule, CommonModule],
+  imports: [RouterModule, ReactiveFormsModule, CommonModule, FormsModule], // <-- tu
   template: `
     <section>
       <h2>Players</h2>
+
+      <!-- FILTER -->
+      <label>
+        Filter by level:
+        <select [(ngModel)]="selectedLevel" (ngModelChange)="onLevelChange()">
+          <option value="">All</option>
+          @for (lvl of levels; track lvl) {
+            <option [value]="lvl.title">{{ lvl.title }}</option>
+          }
+        </select>
+      </label>
+
       <p><strong>Count:</strong> {{ players().length }}</p>
 
       @if (players().length > 0) {
@@ -69,10 +82,15 @@ import { playerLevels, PlayerLevel } from '../levels';
 })
 export class PlayersComponent {
   players = signal<Player[]>([]);
+
+  // FILTER
+  selectedLevel = ''; // <-- teraz string, nie signal
+  levels = playerLevels; // Novice, Adept, Expert, Master...
+
   playerForm: any;
 
   constructor(private playerService: PlayerService, private fb: FormBuilder) {
-    this.players.set(this.playerService.getPlayers());
+    this.loadPlayers(); // load initial list
 
     this.playerForm = this.fb.group({
       nickname: ['', [Validators.required, Validators.minLength(2)]],
@@ -80,6 +98,25 @@ export class PlayersComponent {
     });
   }
 
+  // FILTER LOGIKA
+  onLevelChange() {
+    this.loadPlayers();
+  }
+
+  loadPlayers() {
+    const level = this.selectedLevel;
+
+    if (level === '') {
+      this.players.set(this.playerService.getPlayers());
+    } else {
+      const filtered = this.playerService
+        .getPlayers()
+        .filter(p => this.getLevel(p).title === level);
+      this.players.set(filtered);
+    }
+  }
+
+  // CREATE PLAYER
   createPlayer() {
     if (this.playerForm.invalid) {
       this.playerForm.markAllAsTouched();
@@ -93,18 +130,17 @@ export class PlayersComponent {
     };
 
     this.playerService.addPlayer(newPlayer);
-    this.players.set(this.playerService.getPlayers());
+    this.loadPlayers();
     this.playerForm.reset({ xp: 0 });
   }
 
+  // REMOVE PLAYER
   remove(id: number) {
     this.playerService.removePlayer(id);
-    this.players.set(this.playerService.getPlayers());
+    this.loadPlayers();
   }
 
-  // -----------------------------
   // LEVEL LOGIKA
-  // -----------------------------
   getLevel(player: Player): PlayerLevel {
     let level = playerLevels[0];
     for (const l of playerLevels) {
@@ -118,20 +154,16 @@ export class PlayersComponent {
     for (const l of playerLevels) {
       if (player.xp < l.xpRequired) return l;
     }
-    return null; // už na max level
+    return null;
   }
 
   getProgressPercent(player: Player): number {
     const level = this.getLevel(player);
     const nextLevel = this.getNextLevel(player);
-
     if (!nextLevel) return 100;
 
     const xpInCurrentLevel = player.xp - level.xpRequired;
     const xpNeededForNext = nextLevel.xpRequired - level.xpRequired;
-
-    if (xpNeededForNext <= 0) return 100;
-
-    return (xpInCurrentLevel / xpNeededForNext) * 100;
+    return xpNeededForNext > 0 ? (xpInCurrentLevel / xpNeededForNext) * 100 : 100;
   }
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable } from '@angular/core'; 
 import { playerLevels } from '../levels';
 
 export interface Player {
@@ -10,7 +10,6 @@ export interface Player {
   image?: string;
 }
 
-
 @Injectable({ providedIn: 'root' })
 export class PlayerService {
   private players: Player[] = [
@@ -19,8 +18,20 @@ export class PlayerService {
     { id: 3, nickname: 'Runner', xp: 700, clanId: 1, image: 'assets/my-header.jpg' }
   ];
 
-  getPlayers(): Player[] {
-    return [...this.players];
+  /** --------------------------------------
+   *  GET PLAYERS + FILTER BY LEVEL
+   * -------------------------------------- */
+  getPlayers(level?: string): Player[] {
+    // Bez filtra → vráť všetkých
+    if (!level) {
+      return [...this.players];
+    }
+
+    // S filtrom → nechaj iba tých, ktorých level.title sa zhoduje
+    return this.players.filter(p => {
+      const playerLevel = this.getLevel(p).title; // napr. "Novice", "Adept"
+      return playerLevel === level;
+    });
   }
 
   getPlayerById(id: number): Player | undefined {
@@ -45,9 +56,8 @@ export class PlayerService {
   }
 
   /** --------------------------------------
-   *  Funkcie pre výpočet levelu podľa XP
+   *  Level systém
    * -------------------------------------- */
-
   getLevel(player: Player) {
     let level = playerLevels[0];
     for (const l of playerLevels) {
@@ -61,13 +71,13 @@ export class PlayerService {
     for (const l of playerLevels) {
       if (player.xp < l.xpRequired) return l;
     }
-    return playerLevels[playerLevels.length - 1]; // max level
+    return playerLevels[playerLevels.length - 1];
   }
 
   getProgressPercent(player: Player) {
     const level = this.getLevel(player);
     const nextLevel = this.getNextLevel(player);
-    if (level.level === nextLevel.level) return 100; // max level
+    if (level.level === nextLevel.level) return 100;
     return ((player.xp - level.xpRequired) / (nextLevel.xpRequired - level.xpRequired)) * 100;
   }
 }
