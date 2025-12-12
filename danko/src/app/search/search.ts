@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -7,30 +7,27 @@ import { FormsModule } from '@angular/forms';
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `
-    <label>
-      Search:
-      <input
-        type="text"
-        [(ngModel)]="query"
-        (ngModelChange)="onQueryChange()"
-        placeholder="Type to search..."
-      />
-    </label>
+    <input
+      type="text"
+      placeholder="Search..."
+      [(ngModel)]="query"
+      (ngModelChange)="onQueryChange()"
+    />
   `,
+
   styles: [`
     input {
-      padding: 0.3rem 0.5rem;
-      border-radius: 4px;
-      border: 1px solid #ccc;
-      width: 200px;
-      margin-bottom: 0.5rem;
+      padding: 5px 10px;
+      margin-bottom: 10px;
+      width: 100%;
+      max-width: 300px;
+      box-sizing: border-box;
     }
   `]
 })
 export class SearchComponent {
   query: string = '';
 
-  // Output emitujúci hodnotu do parent komponentu
   @Output() queryChange = new EventEmitter<string>();
 
   onQueryChange() {
