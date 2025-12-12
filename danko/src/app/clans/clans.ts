@@ -1,18 +1,23 @@
 import { Component, signal } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 
 import { ClanService, Clan } from './clan.service';
 import { PlayerService } from '../players/player.service';
-import { RouterModule } from '@angular/router';
+import { SearchComponent } from '../search/search';
 
 @Component({
   selector: 'app-clans',
   standalone: true,
-  imports: [RouterModule, ReactiveFormsModule, CommonModule],
+  imports: [RouterModule, ReactiveFormsModule, CommonModule, SearchComponent],
   template: `
     <section>
       <h2>Clans</h2>
+
+      <!-- SEARCH -->
+      <app-search (queryChange)="onSearch($event)"></app-search>
+
       <p><strong>Count:</strong> {{ clans().length }}</p>
 
       @if (clans().length > 0) {
@@ -31,7 +36,7 @@ import { RouterModule } from '@angular/router';
           <hr/>
         }
       } @else {
-        <p>No clans yet.</p>
+        <p>No clans found.</p>
       }
 
       <h3>Create New Clan</h3>
@@ -65,19 +70,37 @@ import { RouterModule } from '@angular/router';
 export class ClansComponent {
   clans = signal<Clan[]>([]);
   clanForm: any;
+  searchQuery: string = '';
 
   constructor(
     private clanService: ClanService,
     private playerService: PlayerService,
     private fb: FormBuilder
   ) {
-    this.clans.set(this.clanService.getClans());
-
     this.clanForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2)]],
       description: [''],
       capacity: [10, [Validators.required, Validators.min(1)]],
     });
+
+    this.loadClans();
+  }
+
+  // SEARCH
+  onSearch(query: string) {
+    this.searchQuery = query.toLowerCase();
+    this.loadClans();
+  }
+
+  // LOAD + FILTER
+  loadClans() {
+    let list = this.clanService.getClans();
+
+    if (this.searchQuery !== '') {
+      list = list.filter(c => c.name.toLowerCase().includes(this.searchQuery));
+    }
+
+    this.clans.set(list);
   }
 
   createClan() {
@@ -94,11 +117,9 @@ export class ClansComponent {
       members: [],
       image: 'assets/my-header.jpg'
     };
-    
+
     this.clanService.addClanFromForm(newClan);
-    this.clans.set(this.clanService.getClans());
-
-
+    this.loadClans();
     this.clanForm.reset({ capacity: 10 });
   }
 
@@ -110,6 +131,6 @@ export class ClansComponent {
       }
     }
     this.clanService.removeClan(id);
-    this.clans.set(this.clanService.getClans());
+    this.loadClans();
   }
 }

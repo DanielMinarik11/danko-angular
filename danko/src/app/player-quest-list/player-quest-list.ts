@@ -7,21 +7,14 @@ import { RouterModule } from '@angular/router';
   selector: 'app-player-quest-list',
   standalone: true,
   imports: [CommonModule, RouterModule],
-  template: `
-    <h4>{{ title }}</h4>
-    <ul>
-      <li *ngFor="let quest of quests; trackBy: trackById">
-        <a [routerLink]="['/quests', quest.id]">{{ quest.title }}</a> — {{ quest.xp }} XP
-        <button (click)="toggleComplete.emit(quest)">Toggle</button>
-      </li>
-    </ul>
-    <p *ngIf="quests.length === 0">No quests here.</p>
-  `
+  templateUrl: './player-quest-list.html'
 })
 export class PlayerQuestListComponent {
-  @Input() quests: Quest[] = [];
+
+  // nepouzivat *ngFor a *ngIf ale @for a @if
+  @Input() quests: Quest[] = []; // https://angular.dev/guide/components/inputs
   @Input() title = '';
-  @Output() toggleComplete = new EventEmitter<Quest>();
+  @Output() toggleComplete = new EventEmitter<Quest>(); // output
 
   trackById(index: number, quest: Quest) {
     return quest.id;

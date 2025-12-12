@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PlayerQuestList } from './player-quest-list';
+import { PlayerQuestListComponent } from './player-quest-list';
 
 describe('PlayerQuestList', () => {
-  let component: PlayerQuestList;
-  let fixture: ComponentFixture<PlayerQuestList>;
+  let component: PlayerQuestListComponent;
+  let fixture: ComponentFixture<PlayerQuestListComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PlayerQuestList]
+      imports: [PlayerQuestListComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(PlayerQuestList);
+    fixture = TestBed.createComponent(PlayerQuestListComponent);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

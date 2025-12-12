@@ -1,1 +1,8 @@
-<p>player-quest-list works!</p>
+    <h4>{{ title }}</h4>
+    <ul>
+      <li *ngFor="let quest of quests; trackBy: trackById">
+        <a [routerLink]="['/quests', quest.id]">{{ quest.title }}</a> — {{ quest.xp }} XP
+        <button (click)="toggleComplete.emit(quest)">Toggle</button>
+      </li>
+    </ul>
+    <p *ngIf="quests.length === 0">No quests here.</p>
